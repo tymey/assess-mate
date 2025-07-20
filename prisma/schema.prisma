@@ -7,20 +7,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Teacher {
-  id        String   @id @default(uuid())
+model User {
+  id        String      @id @default(uuid())
+  username  String      @unique
+  password  String      // Hashed
   name      String
-  email     String   @unique
+  email     String      @unique
+  students  Student[]
   rubrics   Rubric[]
   ai        TeacherAi[]
-  createdAt DateTime @default(now())
+  createdAt DateTime    @default(now())
 }
 
 model Student {
-  id        String   @id @default(uuid())
+  id        String       @id @default(uuid())
+  user      User         @relation(fields: [userId], references: [id])
+  userId    String
   name      String
   tests     Assessment[]
-  createdAt DateTime @default(now())
+  createdAt DateTime     @default(now())
 }
 
 model Assessment {
@@ -34,8 +39,8 @@ model Assessment {
 
 model Rubric {
   id           String           @id @default(uuid())
-  teacher      Teacher          @relation(fields: [teacherId], references: [id])
-  teacherId    String
+  user         User             @relation(fields: [userId], references: [id])
+  userId       String
   questionNum  Int
   criteria     Json             // JSON array of weighted items
   sharedName   String?          // For reusable templates
@@ -57,8 +62,8 @@ model GradingSession {
 }
 
 model TeacherAi {
-  id          String  @id @default(uuid())
-  teacher     Teacher @relation(fields: [teacherId], references: [id])
-  teacherId   String
+  id          String @id @default(uuid())
+  user        User   @relation(fields: [userId], references: [id])
+  userId      String
   toneContext String
 }
