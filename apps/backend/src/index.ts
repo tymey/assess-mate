@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 import authRoutes from './routes/auth';
+import { authenticate } from './middleware/authMiddleware';
 
 dotenv.config();
 
@@ -12,6 +13,11 @@ app.use(express.json());
 
 // Router
 app.use('/api/auth', authRoutes);
+
+// Authenticate test route
+app.get('/me', authenticate, (req, res) => {
+    res.json({ message: `You're authenticated!` });
+});
 
 app.get('/', (_, res) => res.send('AssessMate API is running!'));
 
