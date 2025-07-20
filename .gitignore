@@ -1,2 +1,22 @@
-node_modules
-dist
+# Node.js
+node_modules/
+dist/
+.env
+
+# Prisma
+prisma/migrations/
+
+# Backend
+apps/backend/node_modules/
+apps/backend/dist/
+
+# Frontend
+apps/frontend/node_modules/
+apps/frontend/dist/
+
+# OS-specific
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/

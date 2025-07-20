@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Teacher {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  rubrics   Rubric[]
+  ai        TeacherAi[]
+  createdAt DateTime @default(now())
+}
+
+model Student {
+  id        String   @id @default(uuid())
+  name      String
+  tests     Assessment[]
+  createdAt DateTime @default(now())
+}
+
+model Assessment {
+  id         String   @id @default(uuid())
+  student    Student  @relation(fields: [studentId], references: [id])
+  studentId  String
+  pdfUrl     String
+  gradedAt   DateTime?
+  sessions   GradingSession[]
+}
+
+model Rubric {
+  id           String           @id @default(uuid())
+  teacher      Teacher          @relation(fields: [teacherId], references: [id])
+  teacherId    String
+  questionNum  Int
+  criteria     Json             // JSON array of weighted items
+  sharedName   String?          // For reusable templates
+  sessions     GradingSession[]
+}
+
+model GradingSession {
+  id               String     @id @default(uuid())
+  assessment       Assessment @relation(fields: [assessmentId], references: [id])
+  assessmentId     String
+  rubric           Rubric     @relation(fields: [rubricId], references: [id])
+  rubricId         String
+  aiScore          Int
+  teacherScore     Int?
+  aiFeedback       String
+  teacherFeedback  String?
+  alignmentScore   Int?       // 0–10
+  createdAt        DateTime   @default(now())
+}
+
+model TeacherAi {
+  id          String  @id @default(uuid())
+  teacher     Teacher @relation(fields: [teacherId], references: [id])
+  teacherId   String
+  toneContext String
+}
