@@ -2,8 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-import authRoutes from './routes/auth';
 import { authenticate } from './middleware/authMiddleware';
+import authRoutes from './routes/auth';
+import rubricRoutes from './routes/rubric';
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 
 // Router
 app.use('/api/auth', authRoutes);
+app.use('/api/rubrics',rubricRoutes);
 
 // Authenticate test route
 app.get('/me', authenticate, (req, res) => {
