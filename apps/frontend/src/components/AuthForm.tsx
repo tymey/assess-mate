@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 
+import handleAxiosError from "../utils/handleAxiosError";
+
 interface Props {
     mode: "login" | "signup";
     onAuthSuccess: (token: string) => void;
@@ -19,19 +21,21 @@ export default function AuthForm({ mode, onAuthSuccess }: Props) {
         try {
             const response = await axios.post(endpoint, mode === "login" ? { username, password } : { username, password, name, email });
 
-            if (response.statusText === "OK") {
+            console.log(response.statusText);
+
+            if (response.statusText === "Created" || response.statusText === "OK") {
                 onAuthSuccess(response.data.token);
             } else {
                 alert(response.data.message || "Authentication failed");
             }
-        } catch (error) {
-            alert(`Authentication failed: ${error}`);
+        } catch (error: unknown) {
+            handleAxiosError(error);
         }
     };
 
     return (
         <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10">
-            <h1>{mode}</h1>
+            <h1 className="text-xl font-semibold mb-4 text-center capitalize">{mode}</h1>
             <input
                 className="w-full border p-2 mb-4"
                 placeholder="Username"
@@ -42,7 +46,7 @@ export default function AuthForm({ mode, onAuthSuccess }: Props) {
                 className="w-full border p-2 mb-4"
                 type="password"
                 placeholder="Password"
-                value={username}
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
             {mode === "signup" ? (

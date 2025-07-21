@@ -12,7 +12,7 @@ model User {
   username  String      @unique
   password  String      // Hashed
   name      String
-  email     String      @unique
+  email     String      
   students  Student[]
   rubrics   Rubric[]
   ai        TeacherAi[]
