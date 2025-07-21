@@ -1,18 +1,21 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import LandingPage from "./pages/LandingPage";
+import DashboardPage from "./pages/DashboardPage";
+import { AuthProvider } from "./context/AuthContext";
 
 export default function App() {
     return (
-      <BrowserRouter>
-          <nav className="p-4 flex gap-4 justify-center bg-gray-100">
-              <Link to="/login">Login</Link>
-              <Link to="/signup">Signup</Link>
-          </nav>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-          </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+            </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     );
 }
