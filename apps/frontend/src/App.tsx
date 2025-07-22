@@ -3,6 +3,9 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import LandingPage from "./pages/LandingPage";
 import DashboardPage from "./pages/DashboardPage";
+import RubricsPage from "./pages/RubricsPage";
+import RubricCreatePage from "./pages/RubricCreatePage";
+import RubricEditPage from "./pages/RubricEditPage";
 import { AuthProvider } from "./context/AuthContext";
 
 export default function App() {
@@ -14,6 +17,9 @@ export default function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/rubrics/:id/edit" element={<RubricEditPage />} />
+              <Route path="/rubrics/new" element={<RubricCreatePage />} />
+              <Route path="/rubrics" element={<RubricsPage />} />
             </Routes>
         </BrowserRouter>
       </AuthProvider>

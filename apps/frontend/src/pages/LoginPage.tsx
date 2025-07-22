@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom";
+
+import { setAuthToken } from "../api/axiosInstance";
 import AuthForm from "../components/AuthForm";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
     const { setToken } = useAuth();
@@ -11,6 +13,7 @@ export default function LoginPage() {
             mode="login"
             onAuthSuccess={(token) => {
                 setToken(token);
+                setAuthToken(token);
                 navigate("/dashboard");
             }}
         />

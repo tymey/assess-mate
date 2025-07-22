@@ -1,12 +1,13 @@
 import express from 'express';
 import cors from 'cors';
+
 import dotenv from 'dotenv';
+dotenv.config();
 
 import { authenticate } from './middleware/authMiddleware';
 import authRoutes from './routes/auth';
 import rubricRoutes from './routes/rubric';
 
-dotenv.config();
 
 const app = express();
 app.use(cors());
