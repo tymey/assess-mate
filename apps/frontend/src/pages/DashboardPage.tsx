@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
 import { useAuth } from "../context/AuthContext";
 
 export default function DashboardPage() {
@@ -31,25 +30,45 @@ export default function DashboardPage() {
             </div>
 
             <div className="grid gap-4">
-                <div className="p-4 bg-white shadow rounded">📄 Recent Tests</div>
+                <div className="p-4 bg-white shadow rounded">
+                    <div className="flex justify-between items-center mb-2">
+                        <span>📄 Recent Tests</span>
+                        <Link to="/tests/upload" className="text-blue-600 underline text-sm">
+                            + Upload Test
+                        </Link>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                        View and manage recent student test submissions.
+                    </p>
+                </div>
 
                 <div className="p-4 bg-white shadow rounded">
                     <div className="flex justify-between items-center mb-2">
                         <span>📝 Rubrics</span>
-                        <Link
-                            to="/rubrics/new"
-                            className="text-blue-600 underline text-sm"
-                        >
+                        <Link to="/rubrics/new" className="text-blue-600 underline text-sm">
                             + Create New Rubric
                         </Link>
                     </div>
-                    <p className="text-sm text-gray-600">Manage your grading rubrics.</p>
-                    <Link to="/rubrics" className="text-blue-600 underline text-sm">
-                        View All Rubrics
-                    </Link>
+                    <p className="text-sm text-gray-600">
+                        Manage your grading rubrics.
+                    </p>
                 </div>
 
-                <div className="p-4 bg-white shadow rounded">📊 Feedback Trends</div>
+                <div className="p-4 bg-white shadow rounded">
+                    <div className="flex justify-between items-center mb-2">
+                        <span>👥 Students</span>
+                        <Link to="/students" className="text-blue-600 underline text-sm">
+                            + Manage Students
+                        </Link>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                        Add, view, and manage your students.
+                    </p>
+                </div>
+
+                <div className="p-4 bg-white shadow rounded">
+                    <span>📊 Feedback Trends</span>
+                </div>
             </div>
         </div>
     );
