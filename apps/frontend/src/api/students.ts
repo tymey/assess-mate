@@ -9,3 +9,11 @@ export async function fetchStudents() {
 export async function createStudent(name: string) {
     return api.post(BASE_URL, { name }).then((res) => res.data);
 }
+
+export async function updateStudent(id: string, name: string) {
+    return api.patch(`${BASE_URL}/${id}`, { name }).then((res) => res.data);
+}
+
+export async function deleteStudent(id: string) {
+    return api.delete(`${BASE_URL}/${id}`).then((res) => res.data);
+}
