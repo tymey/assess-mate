@@ -34,3 +34,50 @@ export const postNewStudent = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+export const updateStudent = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    const { userId } = (req as any).user;
+
+    try {
+        const student = await prisma.student.findFirst({
+            where: { id, userId }
+        });
+
+        if (!student) {
+            return res.status(404).json({ message: "Student not found" });
+        }
+
+        const updated = await prisma.student.update({
+            where: { id },
+            data: { name },
+        });
+
+        res.status(200).json(updated);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+export const deleteStudent = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { userId } = (req as any).user;
+
+    try {
+        const student = await prisma.student.findFirst({
+            where: { id, userId }
+        });
+
+        if (!student) {
+            return res.status(404).json({ message: "Student not found" });
+        }
+
+        await prisma.student.delete({ where: { id } });
+        res.status(200).json({ message: "Student deleted" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
