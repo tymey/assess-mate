@@ -12,6 +12,8 @@ import uploadRoutes from './routes/upload';
 import studentRoutes from './routes/student';
 import ocrRoutes from './routes/ocr';
 import gradeRoutes from './routes/grade';
+import toneRoutes from './routes/tone';
+import gradingSessionRoutes from './routes/gradingSession';
 
 const app = express();
 app.use(cors());
@@ -25,6 +27,8 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads'))); // Serv
 app.use('/api/students', studentRoutes);
 app.use('/api/ocr', ocrRoutes);
 app.use('/api/grade', gradeRoutes);
+app.use('/api/tone', toneRoutes);
+app.use('/api/grading-session', gradingSessionRoutes);
 
 // Authenticate test route
 app.get('/me', authenticate, (req, res) => {

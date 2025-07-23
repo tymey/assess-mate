@@ -12,34 +12,99 @@ export const gradingSchema = z.object({
 
 const parser = StructuredOutputParser.fromZodSchema(gradingSchema as any);
 
-const prompt = ChatPromptTemplate.fromMessages([
-    ["system", "You are an AI grading assistant. Your job is to assign a score and give helpful feedback based on the rubric."],
-    ["human", `
-        Grade the following boxed answer based on the rubric. Use the rubric's point values to decide the score.
+function buildFewShotPrompt({
+    toneContext,
+    examples,
+}: {
+    toneContext: string;
+    examples: {
+        rubric: string;
+        boxedAnswer: string;
+        text: string;
+        score: string;
+        feedback: string;
+    }[];
+}) {
+    const messages: [string, string][] = [];
 
-        Rubric for Question {questionNum}:
-        {rubric}
+    // System
+    messages.push([
+        "system",
+        `
+You are an AI grading assistant. Match the tone and logic of the teacher's grading style.
 
-        Student's Boxed Answer:
-        {boxedAnswer}
+Teacher's tone context:
+${toneContext}
+        `.trim()
+    ]);
 
-        Student's Work:
-        {text}
+    // Few-shot examples
+    for (let ex of examples) {
+        // Human
+        messages.push([
+            "human",
+            `
+Rubric for Question:
+${ex.rubric}
 
-        Evaluate if the boxed answer is correct. Deduct points for missing steps and explain why.
+Student's Boxed Answer:
+${ex.boxedAnswer}
 
-        Respond strictly in this JSON format:
-        {{ "{{" }} "score": "X/Y", "feedback": "..." {{ "}}" }}
-    `],
-]);
+Student's Work:
+${ex.text}
 
-const model = new ChatOpenAI({
-    temperature: 0.3,
-    modelName: "gpt-4o",
-});
+Grade this and return a JSON with "score" and "feedback".
+            `.trim()
+        ]);
 
-export const gradingChain = RunnableSequence.from([
-    prompt,
-    model,
-    parser,
-]);
+        // AI example response
+        messages.push([
+            "ai",
+            JSON.stringify({ score: ex.score, feedback: ex.feedback }, null, 2).replaceAll("{", ``).replaceAll("}", ``),
+        ]);
+    }
+
+    // Final prompt placeholder
+    messages.push([
+        "human",
+        `
+Rubric for Question {questionNum}:
+{rubric}
+
+Student's Boxed Answer:
+{boxedAnswer}
+
+Student's Work:
+{text}
+
+Grade this and return a JSON like:
+{{ "{{" }} "score": "X/Y", "feedback": "..." {{ "}}" }}
+        `.trim()
+    ]);
+
+    return ChatPromptTemplate.fromMessages(messages);
+}
+
+// Main function to create chain dynamically
+export function createGradingChain({
+    toneContext,
+    examples,
+}: {
+    toneContext: string;
+    examples: {
+        rubric: string;
+        boxedAnswer: string;
+        text: string;
+        score: string;
+        feedback: string;
+    }[];
+}) {
+    const prompt = buildFewShotPrompt({ toneContext, examples });
+
+    const model = new ChatOpenAI({
+        temperature: 0.1,
+        modelName: "gpt-4o",
+    });
+
+    return RunnableSequence.from([prompt, model, parser]);
+}

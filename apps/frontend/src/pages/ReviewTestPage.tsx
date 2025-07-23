@@ -1,4 +1,3 @@
-// pages/ReviewTestPage.tsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -81,6 +80,44 @@ export default function ReviewTestPage() {
         setQuestions(updated);
     };
 
+    const handleSaveSession = async () => {
+        try {
+            const assessmentId = state?.assessmentId;
+            if (!assessmentId) {
+                alert("Missing assessment ID");
+                return;
+            }
+
+            const res = await axios.post("/api/grading-session", {
+                assessmentId,
+                questions,
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            alert("Grading session saved!");
+            navigate("/dashboard");
+            console.log("Saved session ID:", res.data.id);
+        } catch (error) {
+            console.error("Failed to save session", error);
+            alert("Error saving grading session");
+        }
+    };
+
+    const handleRefineTone = async () => {
+        try {
+            const res = await axios.post("/api/tone/refine", {}, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            alert("Tone refinement complete! AI will use updated feedback tone going forward.");
+            console.log("Refined toneContext:", res.data.toneContext);
+        } catch (error) {
+            console.error("Tone refinement failed:", error);
+            alert("Failed to refine tone. Please try again.");
+        }
+    };
+
     return (
         <div className="max-w-4xl mx-auto p-6">
             <h1 className="text-2xl font-bold mb-6">Review Test Results</h1>
@@ -112,11 +149,23 @@ export default function ReviewTestPage() {
                             <label className="block text-sm font-medium">Tone Alignment (1–10):</label>
                             <input type="number" min={1} max={10} value={q.alignment} onChange={(e) => handleChange(index, "alignment", e.target.value)} className="border p-1 w-full mb-2" />
 
-                            <button className="text-sm text-blue-500 underline">Refine Tone</button>
+                            <button
+                                className="text-sm text-blue-500 underline"
+                                onClick={handleRefineTone}
+                            >
+                                Refine Tone
+                            </button>
                         </>
                     )}
                 </div>
             ))}
+            <button
+                onClick={handleSaveSession}
+                className="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+                Save Grading Session
+            </button>
+
         </div>
     );
 }

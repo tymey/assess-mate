@@ -4,6 +4,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+interface Assessment {
+    id: string;
+    studentId: string;
+    pdfUrl: string;
+}
+
 interface Student {
     id: string;
     userId: string;
@@ -49,6 +55,13 @@ export default function TestUploadPage() {
         formData.append("studentId", studentId);
 
         try {
+            const upload: { data: { assessment: Assessment, message: string } } = await axios.post("/api/upload", formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
             const res = await axios.post("/api/ocr", formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -57,7 +70,7 @@ export default function TestUploadPage() {
             });
 
             navigate("/tests/review", {
-                state: { questions: res.data.questions, },
+                state: { questions: res.data.questions, assessmentId: upload.data.assessment.id},
             });
             setOcrResults(res.data.questions); // Assume backend returns { questions: [...] }
         } catch (err) {
