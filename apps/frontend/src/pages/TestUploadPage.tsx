@@ -1,3 +1,4 @@
+// src/pages/TestUploadPage.tsx
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -9,10 +10,17 @@ interface Student {
     name: string;
 }
 
+interface OcrResults {
+    questionNum: number;
+    text: string;
+    boxedAnswer: string;
+}
+
 export default function TestUploadPage() {
     const [students, setStudents] = useState<Student[]>([]);
-    const [studentId, setStudentId] = useState<string>("");
+    const [studentId, setStudentId] = useState("");
     const [file, setFile] = useState<File | null>(null);
+    const [ocrResults, setOcrResults] = useState<OcrResults[] | null>(null);
 
     const { token } = useAuth();
     const navigate = useNavigate();
@@ -22,12 +30,12 @@ export default function TestUploadPage() {
             navigate("/login");
         } else {
             axios
-                .get("/api/students", { headers: { Authorization: `Bearer ${token}` } })
+                .get("/api/students", {
+                    headers: { Authorization: `Bearer ${token}` },
+                })
                 .then((res) => {
                     setStudents(res.data);
-                    if (res.data.length > 0) {
-                        setStudentId(res.data[0].id);
-                    }
+                    if (res.data.length > 0) setStudentId(res.data[0].id);
                 });
         }
     }, [token, navigate]);
@@ -40,15 +48,22 @@ export default function TestUploadPage() {
         formData.append("pdf", file);
         formData.append("studentId", studentId);
 
-        await axios.post("/api/upload", formData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "multipart/form-data",
-            },
-        });
+        try {
+            const res = await axios.post("/api/ocr", formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
 
-        alert("Test uploaded successfully!");
-        navigate("/dashboard");
+            navigate("/tests/review", {
+                state: { questions: res.data.questions, },
+            });
+            setOcrResults(res.data.questions); // Assume backend returns { questions: [...] }
+        } catch (err) {
+            alert("OCR failed");
+            console.error(err);
+        }
     };
 
     return (
@@ -84,9 +99,28 @@ export default function TestUploadPage() {
                     type="submit"
                     className="bg-blue-600 text-white px-4 py-2 rounded"
                 >
-                    Upload Test
+                    Run OCR
                 </button>
             </form>
+
+            {ocrResults && (
+                <div className="max-w-2xl mx-auto mt-6 bg-white shadow p-4 rounded">
+                    <h2 className="text-lg font-semibold mb-2">OCR Results</h2>
+                    {ocrResults.map((q, i) => (
+                        <div key={i} className="mb-4 border-b pb-2">
+                            <p className="text-sm text-gray-700 mb-1">
+                                <strong>Q{q.questionNum}:</strong>
+                            </p>
+                            <pre className="text-xs bg-gray-50 p-2 rounded whitespace-pre-wrap">
+                                {q.text}
+                            </pre>
+                            <p className="text-sm mt-1 text-blue-800">
+                                <strong>Boxed Answer:</strong> {q.boxedAnswer || "N/A"}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

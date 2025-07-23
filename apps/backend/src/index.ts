@@ -11,6 +11,7 @@ import rubricRoutes from './routes/rubric';
 import uploadRoutes from './routes/upload';
 import studentRoutes from './routes/student';
 import ocrRoutes from './routes/ocr';
+import gradeRoutes from './routes/grade';
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads'))); // Serve uploads
 app.use('/api/students', studentRoutes);
 app.use('/api/ocr', ocrRoutes);
+app.use('/api/grade', gradeRoutes);
 
 // Authenticate test route
 app.get('/me', authenticate, (req, res) => {

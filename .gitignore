@@ -10,6 +10,7 @@ prisma/migrations/
 apps/backend/node_modules/
 apps/backend/dist/
 apps/backend/.env
+apps/backend/eng.traineddata
 
 # Frontend
 apps/frontend/node_modules/
