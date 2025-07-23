@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import AuthenticatedLayout from "./layouts/AuthenticatedLayout";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import LandingPage from "./pages/LandingPage";
@@ -19,13 +21,16 @@ export default function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/rubrics/:id/edit" element={<RubricEditPage />} />
-              <Route path="/rubrics/new" element={<RubricCreatePage />} />
-              <Route path="/rubrics" element={<RubricsPage />} />
-              <Route path="/tests/upload" element={<TestUploadPage />} />
-              <Route path="/tests/review" element={<ReviewTestPage />} />
-              <Route path="/students" element={<StudentsPage />} />
+              {/* Authenticated Routes */}
+              <Route element={<AuthenticatedLayout />}>
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/rubrics/:id/edit" element={<RubricEditPage />} />
+                <Route path="/rubrics/new" element={<RubricCreatePage />} />
+                <Route path="/rubrics" element={<RubricsPage />} />
+                <Route path="/tests/upload" element={<TestUploadPage />} />
+                <Route path="/tests/review" element={<ReviewTestPage />} />
+                <Route path="/students" element={<StudentsPage />} />
+              </Route>
             </Routes>
         </BrowserRouter>
       </AuthProvider>
