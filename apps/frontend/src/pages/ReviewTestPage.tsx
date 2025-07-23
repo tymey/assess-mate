@@ -122,6 +122,13 @@ export default function ReviewTestPage() {
         <div className="max-w-4xl mx-auto p-6">
             <h1 className="text-2xl font-bold mb-6">Review Test Results</h1>
 
+            <button
+                className="mb-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                onClick={handleRefineTone}
+            >
+                Refine Tone
+            </button>
+
             {questions.map((q, index: number) => (
                 <div key={index} className="bg-white shadow p-4 rounded mb-4">
                     <h2 className="font-semibold mb-2">Question {q.questionNum}</h2>
@@ -148,13 +155,6 @@ export default function ReviewTestPage() {
 
                             <label className="block text-sm font-medium">Tone Alignment (1–10):</label>
                             <input type="number" min={1} max={10} value={q.alignment} onChange={(e) => handleChange(index, "alignment", e.target.value)} className="border p-1 w-full mb-2" />
-
-                            <button
-                                className="text-sm text-blue-500 underline"
-                                onClick={handleRefineTone}
-                            >
-                                Refine Tone
-                            </button>
                         </>
                     )}
                 </div>

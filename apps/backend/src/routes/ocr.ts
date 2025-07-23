@@ -70,11 +70,13 @@ router.post('/', authenticate, upload.single('pdf'), async (req, res) => {
                 const boxed = part.match(/\[(.*?)\]/);
                 const boxedAnswer = boxed?.[1] || null;
 
-                questions.push({
-                    questionNum,
-                    text: part,
-                    boxedAnswer
-                });
+                if (questionNum) {
+                    questions.push({
+                        questionNum,
+                        text: part,
+                        boxedAnswer
+                    });
+                }
             }
         }
 
